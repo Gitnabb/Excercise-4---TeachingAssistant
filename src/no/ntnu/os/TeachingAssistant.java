@@ -3,7 +3,7 @@ package no.ntnu.os;
 import java.util.ArrayList;
 import java.util.Random;
 
-/** -----------> HINTS HINTS HINTS HINTS HINTS HINTS <--------------
+/** -----------> HINTS HINTS HINTS HINTS HINTS HINTS <-----------
  * You can treat the Student and/or TeachingAssistant classes as monitors. So it is several steps
  *
  * 1) Identify which methods must be synchronized. In general - any code block that changes the state of the
@@ -21,7 +21,7 @@ import java.util.Random;
  *
  * 5) Test your code using different sleep times for the TA and Student.
  *
- *
+ * -----------> INSTRUCTIONS INSTRUCTIONS INSTRUCTIONS  <-----------
  * Template for Teaching Assistant (TA) Thread. Fill in and update code in this
  * class to make it work correctly. Some code places are marked with TODO.
  * Something is missing there. But could be that some other things are needed in
@@ -83,9 +83,11 @@ public class TeachingAssistant extends Thread {
      */
     public boolean getIntoOffice(Student s) {
         if (isBusy()) return false;
+        else {
+            // Not busy, accept the student
+            this.currentStudent = s;
+        }
 
-        // Not busy, accept the student
-        this.currentStudent = s;
 
         // TODO - notify the TA to wake up
 
@@ -103,7 +105,7 @@ public class TeachingAssistant extends Thread {
      *   come another time
      * @throws java.lang.Exception
      */
-    public boolean placeStudentInQueue(Student s) throws Exception {
+    public synchronized boolean placeStudentInQueue(Student s) throws Exception {
         if (waitingStudents.contains(s)) {
             // Should normally not experience this situation
             throw new Exception("TA: Error!!! Student " + s.getId()
@@ -159,7 +161,7 @@ public class TeachingAssistant extends Thread {
      * Help the student and notify him/her when help is done. A blocking method.
      * @throws InterruptedException
      */
-    private void helpStudent() throws InterruptedException {
+    private synchronized void helpStudent() throws InterruptedException {
         // Help takes some time
         System.out.println("TA: TA helping student " + currentStudent.getId() + "...");
         int sleepTime = MIN_HELP_TIME + random.nextInt(1000);
