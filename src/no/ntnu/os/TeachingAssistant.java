@@ -3,7 +3,25 @@ package no.ntnu.os;
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
+/** -----------> HINTS HINTS HINTS HINTS HINTS HINTS <--------------
+ * You can treat the Student and/or TeachingAssistant classes as monitors. So it is several steps
+ *
+ * 1) Identify which methods must be synchronized. In general - any code block that changes the state of the
+ * object (it's fields), should be synchronized. Otherwise several threads can change the code simultaneously
+ * and bring it into an inconsistent state.
+ *
+ * 2) Are there any synchronized code blocks? Cases where the whole method should not be synchronized, but only
+ * a part of it? An example could be a method involving sleep - you do not want to block all other threads while
+ * one thread is sleeping.
+ * 3) Implement the synchronized blocks
+ *
+ * 4) Add wait() and notify() commands where necessary. In general - in any place where you see "X should notify Y" it
+ * should be notify() function. In all places where you see "X should wait for event E from Y", it should be wait().
+ * Think carefully inside which class the notify() and wait() should be placed
+ *
+ * 5) Test your code using different sleep times for the TA and Student.
+ *
+ *
  * Template for Teaching Assistant (TA) Thread. Fill in and update code in this
  * class to make it work correctly. Some code places are marked with TODO.
  * Something is missing there. But could be that some other things are needed in
