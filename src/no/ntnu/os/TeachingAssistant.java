@@ -26,7 +26,7 @@ import java.util.Random;
  * class to make it work correctly. Some code places are marked with TODO.
  * Something is missing there. But could be that some other things are needed in
  * addition.
- * There might be bugs in the template. If you fine some, please, inform
+ * There might be bugs in the template. If you find some, please, inform
  * the author!
  *
  * There are several main public methods:
@@ -59,7 +59,9 @@ public class TeachingAssistant extends Thread {
     private boolean shouldWork;
 
     /** Minimum time it takes to help, in milliseconds */
-    private final static int MIN_HELP_TIME = 5000;
+    private final static int MIN_HELP_TIME = 3000;
+
+    private boolean isSleeping = false;
 
     /**
      * Set up the TAs office
@@ -81,15 +83,17 @@ public class TeachingAssistant extends Thread {
      * @param s
      * @return true if student accepted, false otherwise
      */
-    public boolean getIntoOffice(Student s) {
+    public synchronized boolean getIntoOffice(Student s) {
         if (isBusy()) return false;
         else {
             // Not busy, accept the student
             this.currentStudent = s;
         }
 
-
-        // TODO - notify the TA to wake up
+        // notify the TA to wake up
+        isSleeping = false;
+        shouldWork = true;
+        notifyAll();
 
         return true;
     }
@@ -182,10 +186,14 @@ public class TeachingAssistant extends Thread {
      * have any student to help to. A blocking method
      * @throws InterruptedException
      */
-    private void sleepUntilFirstStudent() throws InterruptedException {
+    private synchronized void sleepUntilFirstStudent() throws InterruptedException {
         System.out.println("TA: TA taking a nap. ZzZz...");
+        isSleeping = true;
 
-        // TODO - Wait for "Wake up" signal from a student
+        while(isSleeping){
+            wait();
+        }
+
     }
 
     /**

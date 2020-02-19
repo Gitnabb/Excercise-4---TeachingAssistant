@@ -28,7 +28,11 @@ public class Student extends Thread {
     /**
      * The students get tired with this probability after each study period
      */
-    private static final float TIREDNESS_PROBABILITY = 0.1f;
+    private static final float TIREDNESS_PROBABILITY = 0.8f;
+
+    private boolean isWaiting = false;
+
+    private boolean isGettingHelp = false;
 
     /**
      * Minimum time it takes to study, in milliseconds
@@ -114,32 +118,51 @@ public class Student extends Thread {
     /**
      * This method should block while the student is waiting in the queue.
      */
-    private void waitForTAToBecomeAvailable() {
-        // TODO - wait for the TA to become available
+    private synchronized void waitForTAToBecomeAvailable() {
+    isWaiting = true;
+        try {
+            while(isWaiting) {
+                wait();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * This method should block while the consultation is in progress.
      */
-    private void waitForConsultationToBeDone() {
-        // TODO - wait for the consultation to be done
+    private synchronized void waitForConsultationToBeDone() {
+        isGettingHelp = true;
+        try {
+            while(isGettingHelp){
+                wait();
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * A method called from the TA thread to let this student know that helping
      * session is finished.
      */
-    void notifyHelpDone() {
+    synchronized void notifyHelpDone() {
         // TODO - Notify the student letting him/her
         // know that the helping is done and it's time to wake up :)
+        isGettingHelp = false;
+        notifyAll();
     }
 
     /**
      * A method called from the TA thread to let this student know that
      * the waiting is finished and he/she can come in.
      */
-    void notifyWaitingDone() {
+    synchronized void notifyWaitingDone() {
         // TODO - Notify the student that the waiting is finished and
-        // he/she can come in.
+        isWaiting = false;
+        notifyAll();
+
     }
 }
